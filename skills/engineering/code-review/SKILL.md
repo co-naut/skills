@@ -59,7 +59,7 @@ Each smell reads *what it is* → *how to fix*; match it against the diff:
 
 Issue both sub-agent calls together, in the foreground, and aggregate the reports they return.
 
-In a repo with a `.codegraph/` index, add to both briefs: "Find the callers of every changed symbol with `codegraph_explore` or `codegraph impact <symbol>`. Done when every caller outside the diff is either reviewed or named as out of scope."
+When the codegraph tools are available, add to both briefs: "For every changed symbol, run the shell command `codegraph impact <symbol>` for its compact list of callers; if you lack the exact name, find it first with the `codegraph_explore` MCP tool. Done when every caller outside the diff is either reviewed or named as out of scope."
 
 **Standards sub-agent prompt** should include:
 
