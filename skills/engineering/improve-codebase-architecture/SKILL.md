@@ -32,7 +32,7 @@ Then spawn a sub-agent with a fresh context window to walk the codebase. Don't f
 - Where do tightly-coupled modules leak across their seams?
 - Which parts of the codebase are untested, or hard to test through their current interface?
 
-When the codegraph tools are available, tell the sub-agent to count the callers (fan-in) and callees (fan-out) of each suspect module with the shell commands `codegraph callers <symbol>` and `codegraph callees <symbol>`, finding the symbol first with the `codegraph_explore` MCP tool. Done when every candidate card states both numbers.
+Tell the sub-agent to `codegraph_explore` each suspect module and read its callers (fan-in) and callees (fan-out) from the result. Done when every candidate card states both counts, taken from that result. Without the codegraph MCP tool, count by grep.
 
 Apply the **deletion test** to anything you suspect is shallow: would deleting it concentrate complexity, or just move it? A "yes, concentrates" is the signal you want.
 

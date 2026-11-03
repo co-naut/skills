@@ -89,7 +89,7 @@ Do not proceed until you have reproduced **and** minimised.
 
 Generate **3–5 ranked hypotheses** before testing any of them. Single-hypothesis generation anchors on the first plausible idea.
 
-When the codegraph tools are available, find the symbol that produces the symptom with the `codegraph_explore` MCP tool, then trace outward with the shell commands `codegraph callers <symbol>` and `codegraph callees <symbol>`. Each hypothesis names the symbol it implicates and its call path from the symptom.
+`codegraph_explore` the symbol that produces the symptom together with each suspect symbol; the result carries the call path between them. Done when every hypothesis names the symbol it implicates and quotes its call path from the symptom. Without the codegraph MCP tool, trace the path by reading.
 
 Each hypothesis must be **falsifiable**: state the prediction it makes.
 
