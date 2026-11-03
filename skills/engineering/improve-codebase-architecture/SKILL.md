@@ -32,7 +32,7 @@ Then spawn a sub-agent with a fresh context window to walk the codebase. Don't f
 - Where do tightly-coupled modules leak across their seams?
 - Which parts of the codebase are untested, or hard to test through their current interface?
 
-In a repo with a `.codegraph/` index, tell the sub-agent to run `codegraph callers` and `codegraph callees` on each suspect module. Done when every candidate carries its fan-in and fan-out, and its card states both.
+In a repo with a `.codegraph/` index, tell the sub-agent to count the callers (fan-in) and callees (fan-out) of each suspect module with `codegraph_explore` or `codegraph callers`/`callees`. Done when every candidate card states both numbers.
 
 Apply the **deletion test** to anything you suspect is shallow: would deleting it concentrate complexity, or just move it? A "yes, concentrates" is the signal you want.
 

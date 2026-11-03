@@ -66,7 +66,7 @@ Two model-invoked references that run *beneath* the other skills, each the singl
 - **`/domain-modeling`**: sharpen the project's *domain* language: challenge a fuzzy term, resolve an overloaded word ("account" doing three jobs), record a hard-to-reverse decision as an ADR. It's the active discipline `/grill-with-docs` drives to keep `GLOSSARY.md` a clean glossary.
 - **`/codebase-design`** is the deep-module vocabulary (module, interface, depth, seam, adapter, leverage, locality) for designing a module's *shape*: a lot of behaviour behind a small interface at a clean seam. `/tdd` and `/improve-codebase-architecture` both speak it.
 
-Beneath the vocabulary sits the **code index**, an environment tool and not a skill. In a repo with a `.codegraph/` directory, `/to-tickets`, `/triage`, `/diagnosing-bugs`, `/code-review`, `/implement`, `/improve-codebase-architecture` and `/retro` each point at the one codegraph command that fits their step.
+Beneath the vocabulary sits the **code index**, an environment tool and not a skill. In a repo with a `.codegraph/` directory, `/to-tickets`, `/triage`, `/diagnosing-bugs`, `/code-review`, `/implement`, `/improve-codebase-architecture` and `/retro` each name the codegraph result their step needs (blast radius, call path, fan-in).
 
 ## Phase boundaries
 

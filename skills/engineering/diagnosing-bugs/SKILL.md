@@ -89,7 +89,7 @@ Do not proceed until you have reproduced **and** minimised.
 
 Generate **3–5 ranked hypotheses** before testing any of them. Single-hypothesis generation anchors on the first plausible idea.
 
-In a repo with a `.codegraph/` index, trace from the symptom with `codegraph callers <symbol>` and `codegraph callees <symbol>`. Each hypothesis names the symbol it implicates and its call path from the symptom.
+In a repo with a `.codegraph/` index, trace the call path from the symptom with `codegraph_explore` or `codegraph callers`/`callees <symbol>`. Each hypothesis names the symbol it implicates and its call path from the symptom.
 
 Each hypothesis must be **falsifiable**: state the prediction it makes.
 

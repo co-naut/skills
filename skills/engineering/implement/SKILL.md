@@ -10,7 +10,7 @@ If the user passes a ticket reference, fetch it from the issue tracker and state
 
 Call the Skill tool with "tdd" where possible, at pre-agreed seams.
 
-In a repo with a `.codegraph/` index, run `codegraph_explore` (CLI: `codegraph explore`) on every symbol you will change before the first edit. Done when each symbol's callers are known.
+In a repo with a `.codegraph/` index, read every symbol you will change, with its callers, through `codegraph_explore` before the first edit. Done when each symbol's callers are listed.
 
 Run typechecking regularly, single test files regularly, and the full test suite once at the end.
 
