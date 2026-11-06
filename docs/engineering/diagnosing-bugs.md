@@ -56,6 +56,10 @@ Phase 5 has one exception. The agent writes the regression test before the fix, 
 
 ## Common questions
 
+**What if CodeGraph cannot show the call path?**
+
+The skill follows missing or truncated paths through source inspection and distinguishes verified edges from hypotheses. CodeGraph is used only when the repository is indexed; an absent graph edge does not rule out a runtime path.
+
 **It fires on quick questions where I just wanted a direct answer.**
 This is the most-reported problem with the skill. On GPT-5.6-Sol especially, users report it triggering on a plain description of a problem: "the model triggers the rather formal diagnosing-bugs skill instead. It then goes on to construct a reproduction scenario (often building a mock scenario with limited value) before giving me a response or suggestion. This results in considerable reply delays." Four separate people reported the same problem on [issue #578](https://github.com/mattpocock/skills/issues/578). The accepted fix is to start with a lighter approach and move to the full diagnosis only when the problem needs it, but that change has not shipped. The skill is tuned for Claude Code's invocation behaviour, and a [model](https://www.aihero.dev/ai-coding-dictionary/model) with a lower activation threshold fires it too often. Until the fix ships, the workaround is to say what you want ("just answer this, don't diagnose") or to disable model invocation for it in your [harness](https://www.aihero.dev/ai-coding-dictionary/harness).
 

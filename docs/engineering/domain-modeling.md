@@ -51,6 +51,10 @@ It cross-references **code** and the committed `GLOSSARY.md` and ADRs, and nothi
 
 ## Common questions
 
+**Does it write glossary entries during OpenCode Plan mode?**
+
+It keeps the proposed entries and ADR decisions in the conversation. Persisting them waits until you switch to a write-capable agent; discussing a design does not authorize project or tracker writes.
+
 **My `GLOSSARY.md` is 500 lines. 1,000. 3,000. What do I do?**
 The size is a symptom. The cause is that the file has taken in implementation detail and decisions that never belonged in a glossary. The fix is a direct instruction: `/grill-with-docs make my GLOSSARY.md more concise and remove any implementation details from it`. Run it against a bloated file and most of it goes. Only split it with a `GLOSSARY-MAP.md` once the file is lean and still covers two domains that a reader would not want to hold at once. Splitting a bloated file gives you several bloated files. The skill's guidance here is not yet strong enough to prevent the growth in the first place, and the issue tracking that is still open.
 

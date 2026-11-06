@@ -1,6 +1,6 @@
 ## What it does
 
-`implement` builds work that has already been decided. You point it at a [ticket](https://www.aihero.dev/ai-coding-dictionary/ticket), a [spec](https://www.aihero.dev/ai-coding-dictionary/spec), or the plan you just agreed in the conversation, and it writes the code, drives [tdd](https://aihero.dev/skills-tdd) at the seams, typechecks as it goes, runs [code-review](https://aihero.dev/skills-code-review) at the end, and commits to the current branch.
+`implement` builds work that has already been decided. You point it at a ticket, spec, or agreed plan. It records the starting commit and existing changes, builds at approved testing seams, verifies the work, and reviews the complete task diff. It commits only when the user or project workflow authorizes that step.
 
 It never reopens the plan. There is no interview, no clarifying round, no proposal of a different approach. Whatever was settled upstream is the input, and the skill's whole job is to turn that into a commit. That is what separates it from typing "build this" at a fresh [agent](https://www.aihero.dev/ai-coding-dictionary/agent), which often redesigns the work while it builds it.
 
@@ -36,7 +36,7 @@ A run has five steps, in order:
 2. Drive [tdd](https://aihero.dev/skills-tdd) at the pre-agreed seams, one red-green slice at a time.
 3. Typecheck often, run single test files as it goes.
 4. Run the full test suite once, at the end.
-5. Run [code-review](https://aihero.dev/skills-code-review), then commit to the current branch.
+5. Run [code-review](https://aihero.dev/skills-code-review) against the recorded start, including interim commits and uncommitted files; fix confirmed findings, then commit only when authorized.
 
 One run covers one ticket. The tickets [to-tickets](https://aihero.dev/skills-to-tickets) produces are tracer-bullet vertical slices sized to fit a single fresh [context window](https://www.aihero.dev/ai-coding-dictionary/context-window), so the intended rhythm is: clear context, implement one ticket, commit, clear again. Each ticket is self-contained, so you can discard the previous ticket's context.
 
@@ -44,7 +44,7 @@ One run covers one ticket. The tickets [to-tickets](https://aihero.dev/skills-to
 
 The skill's central idea is the **seam**, the public boundary you observe behaviour at without reaching inside. Tests live at seams. When the seam is agreed before any code exists, the tests last, and you can rewrite the implementation underneath without changing them.
 
-The "pre-agreed" part matters, and it is also the skill's weakest point. Nothing inside `implement` agrees the seams. `tdd` is the skill that asks, and it refuses to write a test at an unconfirmed seam. So in practice the agreement happens either upstream in the spec, or in the first exchange of the run. If it happens nowhere, the run becomes "just write the code" and nothing warns you. Naming the seams in the spec is what stops that.
+The "pre-agreed" part matters. `tdd` reads approval from the spec, ticket, or parent brief. If it is absent, the primary session agrees seams with you before tests begin. Workers carry that approval forward and return changed seams to the parent instead of silently choosing them.
 
 ## Common questions
 
@@ -62,7 +62,7 @@ Not built in. It commits straight to the current branch. Several people find thi
 
 **`code-review` says it cannot see my changes.**
 
-`code-review` reviews `git diff <fixed-point>...HEAD`, which excludes staged and working-tree changes. `implement` runs it before committing, so unless an interim commit already exists there is nothing in that diff to review. Multiple people have reported this and it is unfixed on both sides. Commit first, then review against the point you branched from.
+This fork passes the recorded starting SHA and an explicit WIP scope to `code-review`. The review includes interim commits, staged and unstaged changes, and relevant untracked files. Existing unrelated work is identified separately. A commit is not required to make the implementation visible to review.
 
 Separately, some people do not want the review inside the run at all, because an agent reviewing the code it just wrote is biased toward its own solution. Running [code-review](https://aihero.dev/skills-code-review) in a fresh session against a fixed point is a valid alternative. The same bias is why that skill runs its two axes in separate sub-agents.
 

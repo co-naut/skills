@@ -1,3 +1,5 @@
+For this personal OpenCode V2 fork, read [.agents/opencode.md](./.agents/opencode.md) before installation, skill customization, or upstream merges. Its local installation and invocation rules override the upstream multi-harness rules below. Preserve uninstalled upstream skills; only [.agents/opencode-skills.txt](./.agents/opencode-skills.txt) defines the installed subset.
+
 Skills are organized into bucket folders under `skills/`:
 
 - `engineering/`: daily code work

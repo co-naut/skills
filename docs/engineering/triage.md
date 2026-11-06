@@ -1,5 +1,7 @@
 ## What it does
 
+In this OpenCode fork, load `@triage`. CodeGraph supports discovery only for indexed repositories; missing or capped results are followed through source inspection before claiming a request is already implemented.
+
 `triage` works through the issues on your project's tracker. It moves each one through a small state machine of **triage roles** (a category role and a state role). Each issue ends as an agent-ready brief, a specific question for the reporter, or a closed issue with a recorded reason.
 
 It is only for issues **you didn't create**. That means raw bug reports, incoming feature requests, or an external pull request that arrived unannounced: work that came into the tracker from outside, in whatever shape the reporter left it. [Tickets](https://www.aihero.dev/ai-coding-dictionary/ticket) from [to-tickets](https://aihero.dev/skills-to-tickets) are already agent-ready, so if you run `triage` over them, you waste the work. The rule is simple: `/triage` is only for incoming issues, not for issues you created yourself.

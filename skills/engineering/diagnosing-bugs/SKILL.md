@@ -89,7 +89,7 @@ Do not proceed until you have reproduced **and** minimised.
 
 Generate **3–5 ranked hypotheses** before testing any of them. Single-hypothesis generation anchors on the first plausible idea.
 
-`codegraph_explore` the symbol that produces the symptom together with each suspect symbol; the result carries the call path between them. Done when every hypothesis names the symbol it implicates and quotes its call path from the symptom. Without the codegraph MCP tool, trace the path by reading.
+When the repository has a CodeGraph index, explore the symptom and suspect symbols with its absolute `projectPath` and `maxFiles: 3`. Each hypothesis names its suspect and cites the observed path from the symptom, distinguishing verified edges from unverified ones. Follow missing or truncated paths through source inspection; without an index, trace directly. An absent graph edge is not proof that a path cannot exist.
 
 Each hypothesis must be **falsifiable**: state the prediction it makes.
 

@@ -8,6 +8,8 @@ It reads the tickets as a **task graph**, not a list. Blocking edges decide what
 
 You invoke this by typing `/implement-spec`, and the agent won't reach for it on its own.
 
+In this OpenCode V2 fork, type `@implement-spec` in the primary session. It uses `general` child sessions for workers that write files, including shared exploration notes. Every worker receives an explicit worktree path; launching a child does not create worktree isolation. Built-in `general` children cannot launch nested subagents, so further delegation stays with the primary session. Background completion is notification-driven.
+
 | Your situation | Reach for |
 | --- | --- |
 | A spec, split into tickets with blocking edges, that you want landed in one run | `/implement-spec` |
@@ -19,15 +21,15 @@ You invoke this by typing `/implement-spec`, and the agent won't reach for it on
 
 - **An issue tracker.** The skill reads the tickets from, and resolves them on, the tracker [setup-matt-pocock-skills](https://aihero.dev/skills-setup-matt-pocock-skills) configured. If none has been configured, it stops and tells you to run that first rather than guessing.
 - **Tickets with blocking edges**, as [to-tickets](https://aihero.dev/skills-to-tickets) writes them. Without edges the graph is flat and every ticket starts at once.
-- **A [harness](https://www.aihero.dev/ai-coding-dictionary/harness) that runs subagents in the background and gives each one a git worktree.** The skill exists to run tickets at the same time, so on a harness that runs subagents one at a time, it is only a slower `implement`.
+- **A write-capable primary session with background subagent access.** The orchestrator creates and assigns worktrees explicitly; OpenCode does not isolate workers merely because they are child sessions.
 
 ## The integration branch
 
 Everything lands on one branch. Each implementer:
 
-1. confirms its worktree is based on the integration branch before it starts,
+1. confirms its fresh worktree's directory, branch, base and clean status before it starts,
 2. builds its ticket with [tdd](https://aihero.dev/skills-tdd), red-green one slice at a time,
-3. merges the integration branch tip into its own branch before reporting done, so landing it is a fast-forward.
+3. commits its ticket and returns the SHA, test evidence, skipped checks and blockers. A serial merge queue integrates completed tickets and checks the combined result.
 
 The tracker decides whether a pull request exists at all. If your tracker closes work through PRs, or you ask for one, the skill opens a draft PR after the first merge and marks it ready at the end. Otherwise the run stops on the integration branch with every ticket resolved the way your tracker closes work, which works fully offline against a local markdown tracker.
 
@@ -45,11 +47,11 @@ No, not any more. One user who liked the in-progress version had exactly this co
 
 **Its review and fix loop ran for hours, or kept "fixing" tickets that hadn't been built yet.**
 
-Both happen when `code-review` runs anywhere other than the one point the skill gives it. It compares the code against the whole spec, so it only makes sense once every ticket has landed. If it runs mid-run, every unbuilt ticket reads as a failure. The agent then builds that ticket, and that triggers another review. At the end, the skill runs `code-review` once and sends every finding to one fix subagent, but it doesn't yet say when to stop after that fix. One user reported a five-ticket feature where "the review and fix loop took roughly four hours". If you see a second broad review start, tell it to run focused checks for the fixed findings and stop. Expect that first review to find real problems. The run's output is a draft that the review completes, not something to ship on its own.
+The whole-spec review runs after every ticket has landed. Confirmed findings go to a fresh implementer and return through the merge queue. Focused checks verify those fixes; broader review repeats only for new changes or unresolved concerns.
 
 **Does it drive tdd like implement does?**
 
-It does now, though it didn't at first. Users running the in-progress version noticed that "the implementer subagents don't inherit the /tdd directive", so red-green stopped as soon as they scaled up from one ticket to a whole spec. Each implementer now builds its ticket with `tdd`. There is still no step where you agree seams interactively, as there is in an `implement` session, so name the seams in the spec or the tickets if you want them pinned.
+Yes. The primary session confirms testing seams unless the spec already records approval, then passes that approval and acceptance criteria to each worker. Workers use `tdd` without asking you to approve the same seam again. A newly required seam returns to the parent for a decision.
 
 **Two implementers running in parallel collided on the same file, or picked different names for the same thing.**
 
@@ -57,7 +59,7 @@ Worktrees don't remove collisions; they postpone them to merge time. A blocking 
 
 **Blocked tickets never start, even after their blocker has merged.**
 
-This is a known problem on GitHub. The tracker's blocked-by count only drops when a blocker *closes*, and tickets typically close when the PR merges, which is the end of the run. The tracker is the right source for the starting graph but a stale one mid-run. Tell the orchestrator to track which tickets have merged into the integration branch itself and compute the frontier from that.
+The orchestrator computes the frontier from tickets successfully merged and verified on the integration branch. Tracker closure may wait for the final PR merge, so it is not the readiness signal during implementation.
 
 **Does this replace Sandcastle or an AFK script?**
 
@@ -65,14 +67,15 @@ No. People ask because the skills now reach into implementation: "is Sandcastle 
 
 **A ticket's key test was skipped inside its worktree, and it reported green.**
 
-A worktree holds only what git tracks. Tests that read gitignored fixtures, local databases, or credentials can silently skip there. For a ticket whose verification depends on untracked material, tell the orchestrator to run it in the main checkout instead.
+A worktree holds only tracked files. Missing local fixtures, databases, or credentials must be reported as verification blockers, not green checks. Arrange the required environment for the worker or integration checks before treating the ticket as verified.
 
 ## It's working if
 
 - Several implementers are running at once whenever the graph allows, not one after another.
 - A ticket starts as soon as its last blocker lands on the integration branch, not when the whole run ends.
 - Every ticket's trace shows `tdd` running, with a failing test before the code.
-- Merges into the integration branch are fast-forwards, not conflict resolutions.
+- Implementation runs in parallel, while merges and integration checks run one at a time.
+- Unexpected dirty worktrees are retained and reported; cleanup removes only clean, integrated worktrees owned by the run.
 - The run ends on one branch with every ticket resolved, and a PR only if your tracker wanted one.
 
 ## Where it fits

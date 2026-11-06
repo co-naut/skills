@@ -47,12 +47,14 @@ Every ticket carries a `wayfinder:<type>` label. Each ticket is either **[HITL](
 | --- | --- | --- | --- |
 | `grilling` | HITL | The default. The question can be settled by talking it through. | [grilling](https://aihero.dev/skills-grilling) plus [domain-modeling](https://aihero.dev/skills-domain-modeling), in a fresh session |
 | `prototype` | HITL | "How should this look" or "how should this behave": a question talking cannot settle. | [prototype](https://aihero.dev/skills-prototype), with a link from the ticket to the built artifact |
-| `research` | AFK | A fact outside the working directory is blocking a decision. | A [research](https://aihero.dev/skills-research) [subagent](https://www.aihero.dev/ai-coding-dictionary/subagent), started when you chart the map and run in parallel on a `research/<name>` branch |
+| `research` | AFK | A fact outside the working directory is blocking a decision. | A [research](https://aihero.dev/skills-research) worker receives a unique output path once its ticket is unblocked and claimed; code-writing investigations get separate worktrees. |
 | `task` | Either | Nothing to decide, but manual work blocks a decision, such as provisioning access, signing up for a service, or moving data so you can see its shape. | The agent alone where it can, otherwise a precise checklist for the human |
 
 `task` is the only type that *does* rather than decides. It belongs on the map only because it unblocks a decision, never because it delivers part of the destination. This type goes wrong most often in practice. Agents read it as an implementation step and start to write product code inside the map.
 
 Research is the only exception to *one ticket per session*.
+
+The primary session checks findings and publishes them through the configured tracker, updating the shared map serially. Local workflows keep durable findings under `.scratch/`; remote publication uses the confirmed repository and authorized push policy. A worker never switches branches in the shared checkout, and an inconclusive result leaves its ticket open.
 
 ## Common questions
 

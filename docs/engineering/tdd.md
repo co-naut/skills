@@ -2,7 +2,7 @@
 
 `tdd` builds a feature or fixes a bug test-first: one failing test, then just enough code to pass it, then the next behaviour. It carries the standards that make that loop produce tests worth keeping: what a good test is, where tests go, what mocks are for, and the three anti-patterns that make a suite worthless.
 
-It writes no test at a seam you have not agreed to first. Before any test exists, it names the public boundaries it intends to test at and stops for your confirmation. Testing effort is finite, and this step spends it on the critical paths instead of on every edge case. `tdd` is also a **reference**, not a driver. It contains the rules of the loop, and something else (you, or [implement](https://aihero.dev/skills-implement)) runs the [session](https://www.aihero.dev/ai-coding-dictionary/session) that applies them.
+It writes tests at approved seams. Approval recorded in a spec, ticket, or parent brief carries into a worker session; the same choice is not asked again. Missing approval or a changed seam is settled with the user through the primary session. `tdd` remains a reference for the loop, used directly or by [implement](https://aihero.dev/skills-implement).
 
 ## When to reach for it
 
@@ -32,7 +32,7 @@ The skill rests on three terms.
 
 **Vertical slice.** Write one test at one seam, then the minimal implementation, then repeat. The first cycle is a **tracer bullet** that proves a single path end to end. The opposite is horizontal slicing: all the tests first, then all the code. Tests written in bulk verify *imagined* behaviour. They check the shape of things rather than what a user does, and they commit you to a test structure before you understand the implementation.
 
-**Pre-agreed seam.** A seam is the public boundary you observe behaviour at without reaching inside. The rule has no exceptions. No test goes at an unconfirmed seam. In the full chain the seams are agreed earlier, during [to-spec](https://aihero.dev/skills-to-spec): "`/tdd` is told to only work at pre-agreed test seams, `/code-review` checks that only agreed-upon test seams were used." Invoked on its own, `tdd` asks you directly.
+**Pre-agreed seam.** A seam is the public boundary you observe behavior at without reaching inside. In the full chain, [to-spec](https://aihero.dev/skills-to-spec) records agreement and worker briefs carry it forward. Invoked alone without prior approval, `tdd` asks through the primary session. A worker escalates new or changed seams before testing there.
 
 The three anti-patterns it is written to prevent:
 
@@ -76,7 +76,7 @@ No. Run against one ticket, it can propose work that belongs to a sibling ticket
 
 ## It's working if
 
-- It stops and names the seams it intends to test at, and waits, before any test file exists.
+- Every tested seam has explicit approval; workers reuse recorded approval and escalate changed seams.
 - One test appears, goes red, gets just enough code to pass, and only then does the next test appear, not a batch of tests followed by a batch of code.
 - Test names read as capabilities ("user can checkout with valid cart"), not as internals ("checkout calls paymentService.process").
 - Expected values in assertions are literals you can trace to the spec, not values recomputed the way the code computes them.

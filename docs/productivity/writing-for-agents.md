@@ -6,6 +6,8 @@ Its default fix is to delete, not to explain. Ask an agent to write instructions
 
 It was called `writing-great-skills` until v1.1. The new name fits what it always was. Almost none of it is specific to skills. The skill-only mechanics (frontmatter, the model- versus user-invoked choice, router skills) live in a linked `SKILL-MECHANICS.md` that you read only when the document in front of you is a skill.
 
+In this OpenCode V2 fork, hiding a skill from automatic discovery does not block explicit loading by ID. Humans use `@skill-id`. New OpenCode-only skills can set `metadata: {opencode/autoinvoke: false}`; the existing `disable-model-invocation: true` is also supported. Codex's `agents/openai.yaml` has no effect on OpenCode invocation.
+
 ## When to reach for it
 
 Type `/writing-for-agents`, or the agent reaches for it on its own when you're creating or editing a skill, or modifying `AGENTS.md` or `CLAUDE.md`.
@@ -46,8 +48,8 @@ Agents told to "streamline" optimise for length, because length is the thing the
 **How do I know when it's done?**
 When it works, and you can no longer find duplication, sediment or no-ops. There is no automated eval. You check by running the document by hand and using the failure-mode vocabulary to diagnose problems. When a document misbehaves, the same vocabulary helps you fix it: name the failure mode first, then fix that.
 
-**Should this live in `CLAUDE.md` or somewhere else?**
-Ask which load you want to pay. `CLAUDE.md` loads into every [session](https://www.aihero.dev/ai-coding-dictionary/session) unconditionally. Material behind a pointer costs only the pointer's own line until it fires. Anything that applies in one session out of ten costs context load in the other nine.
+**Should this live in `AGENTS.md` or somewhere else?**
+Ask which load you want to pay. OpenCode discovers scoped `AGENTS.md` instructions; it does not use a standalone `CLAUDE.md` as a fallback. Material behind a pointer costs only that pointer until it fires. Keep broad guidance in instructions and task-specific detail behind a pointer.
 
 **Do I need to rewrite my documents for each new model?**
 Mostly no, and over-fitting to one model causes its own problems. Updating for a new model is usually another no-op pass rather than a rewrite.

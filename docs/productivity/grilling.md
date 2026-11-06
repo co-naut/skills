@@ -1,5 +1,7 @@
 ## What it does
 
+In this OpenCode V2 fork, read-only fact finding uses an `explore` child session. If already in a built-in `general` child, look up facts directly instead of attempting nested delegation. Decisions still wait for the human's answers, using OpenCode's question tool when appropriate.
+
 `grilling` is the interview loop that stress-tests a plan, a decision, or an idea before anyone acts on it. It maps the subject as a **design tree**: every decision branches into the decisions that hang off it, and interviews you branch by branch until no assumption stays unstated.
 
 It does not ask one question at a time, and it does not ask everything at once. Each **round** asks the whole **frontier**: every decision whose prerequisites are already settled, and nothing else. Two questions never share a round if one depends on the other; a question that hinges on an answer still open belongs to a later round. Your answers settle decisions, the frontier moves outward, and the next round asks what that unblocked. Thirteen questions typically land in about three rounds rather than thirteen.

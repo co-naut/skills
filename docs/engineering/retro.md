@@ -1,6 +1,6 @@
 ## What it does
 
-`retro` looks back over a coding [session](https://www.aihero.dev/ai-coding-dictionary/session) and suggests improvements to the agent's **[environment](https://www.aihero.dev/ai-coding-dictionary/environment)**, so the next run goes better. It reads the session's own record (the current one by default, or one you point it at in the session logs). It finds the moments where the agent struggled, and gives you a list of candidate fixes, most severe first.
+`retro` looks back over a coding [session](https://www.aihero.dev/ai-coding-dictionary/session) and suggests improvements to the agent's **[environment](https://www.aihero.dev/ai-coding-dictionary/environment)**, so the next run goes better. It reads the current conversation or an exported OpenCode session, finds where the agent struggled, and presents candidate fixes, most severe first.
 
 It changes the environment, not the code. Take the bug the agent shipped, the file it needed twenty [tool calls](https://www.aihero.dev/ai-coding-dictionary/tool-call) to find, or the rule the reviewer missed. `retro` does not fix any of them directly. It asks what in the repo let them happen, and proposes the check, pointer, or standard that prevents them next time. It also only proposes. Nothing changes until you pick a candidate.
 
@@ -30,6 +30,10 @@ Before `retro` writes any rule, it classifies the violation. A **mechanical** vi
 
 ## Common questions
 
+**How does it inspect another OpenCode session?**
+
+It identifies the session with `opencode session list` and reads `opencode session export <session-id>`. Exports stay local and are sanitized before sharing. Service logs are diagnostics, not the conversation transcript; unavailable history is stated as a limit.
+
 **Does it write the lint rule itself, or wait for a yes? Can I wire it to run after every session?**
 
 It waits. `retro` only proposes. Nothing changes until you pick a candidate, so it edits nothing by hand and installs no hook automatically. This is deliberate. One user asked for exactly this after being "burned by auto-hooks that blocked good changes." It takes judgement to decide what deserves a permanent check, so the skill stays [human-in-the-loop](https://www.aihero.dev/ai-coding-dictionary/human-in-the-loop) and user-invoked. Some users do run it after every implementation run. But a smooth session has little to teach, so a run after every session mostly produces rules nobody needed. There is no dry-run mode. A proposed check is code like any other, so try it against the repo before you let it block merges.
@@ -44,11 +48,11 @@ This is the strongest criticism of it. One user found that "once the job is fini
 
 **My session is long. Run it now, or start fresh?**
 
-By default it reviews the current session. That is the best case, because the struggles are still in the context window. If the session has already moved out of the [smart zone](https://www.aihero.dev/ai-coding-dictionary/smart-zone), [clear](https://www.aihero.dev/ai-coding-dictionary/clearing) it, and point a fresh `/retro` at the previous session in the session logs.
+By default it reviews the current session. If needed, start a separate session and load `@retro` with the previous session's ID. Exported conversation history supplies the evidence; background-service logs do not replace it.
 
-**The agent keeps making the same mistake. Should I add a line to `CLAUDE.md`?**
+**The agent keeps making the same mistake. Should I add a line to `AGENTS.md`?**
 
-Usually not, and `retro` pushes back on this more than anything else. A line in `CLAUDE.md` loads into every session, gives less weight to everything else in the file, and goes out of date as the code changes. If the mistake is mechanical, the fix is a check that fails. If it is a judgement call, it goes in the coding standards the reviewer reads. `AGENTS.md` and `CLAUDE.md` are for navigation pointers and little else. For the same reason, `retro` is not a [memory system](https://www.aihero.dev/ai-coding-dictionary/memory-system). It does not store what happened. It changes the environment so the mistake cannot happen again.
+Prefer a deterministic check for a mechanical mistake and a coding standard for a judgement call. Use `AGENTS.md` sparingly for guidance and navigation pointers that need to be loaded broadly. OpenCode does not discover a standalone `CLAUDE.md`; account for symlinks or explicit configuration before editing the instruction source. A retrospective proposes environment improvements rather than storing the session as memory.
 
 **My setup mentions `CODING_STANDARDS.md` and I don't have one. Where does it come from?**
 

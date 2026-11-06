@@ -10,6 +10,8 @@
 
 # Skills For Real Engineers
 
+> **Personal OpenCode V2 fork.** The full upstream collection is preserved for regular merges from `mattpocock/skills`. For this fork's selected skills, safe installer, and update workflow, see [OpenCode setup](./.agents/opencode.md). The installation instructions below describe upstream, not this local setup.
+
 [![skills.sh](https://skills.sh/b/mattpocock/skills)](https://skills.sh/mattpocock/skills)
 
 My agent skills that I use every day to do real engineering - not vibe coding.

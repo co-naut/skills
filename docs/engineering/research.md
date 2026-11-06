@@ -6,7 +6,7 @@ It does not answer you in the conversation. The output is a file, written where 
 
 ## When to reach for it
 
-Type `/research`, or the [agent](https://www.aihero.dev/ai-coding-dictionary/agent) reaches for it automatically when a task turns into reading legwork.
+Type `@research` in OpenCode V2, or the [agent](https://www.aihero.dev/ai-coding-dictionary/agent) reaches for it automatically when a task turns into reading legwork.
 
 Reach for it when the next step is *finding something out* from outside the working directory (how a third-party API behaves, what a spec says, whether a version claim holds), and you'd rather not stall your own thread doing the reading. What you need decides which skill:
 
@@ -24,7 +24,7 @@ The line between `research` and `grill-with-docs` is the **shelf life of what co
 
 The reading runs as a **background agent**. You keep working while it follows each claim to its primary source, writes one Markdown file, and reports back. Research is legwork you delegate, not thinking you outsource. You get a document to grill, plan, or design against, and you still make the decision.
 
-Nothing stops the background agent from spawning another background agent of its own. This is the skill's best-documented problem.
+In this OpenCode V2 fork, the primary session dispatches one background `general` worker with a self-contained brief. If the skill is loaded inside a child session, that child does the research directly. Built-in `general` children cannot launch further subagents. The worker must be able to write the findings, so the read-only `explore` agent is not suitable.
 
 The repo decides where the file goes, not the skill. It follows whatever convention already exists for notes. If there is none, it picks a sensible place and tells you where. It writes one file per run.
 
@@ -32,9 +32,9 @@ The repo decides where the file goes, not the skill. It follows whatever convent
 
 **It spawned a second research agent. Is that meant to happen?**
 
-No. This is an open bug, [issue #530](https://github.com/mattpocock/skills/issues/530). The skill tells its caller to spin up a background agent but does not restrict the agent type. So the caller spawns a `general-purpose` agent, which has the `Agent` tool and the same instructions, and follows them again. One reporter measured a single research task costing roughly 450k [tokens](https://www.aihero.dev/ai-coding-dictionary/token) across three overlapping runs, and the duplicate finished half an hour later where the user could not see it. It also happens outside Claude Code. Users confirmed the same nesting in Codex with GPT-5.6-sol. There is no shipped fix. Users have patched their own installed copy with a line telling an agent that is already a [subagent](https://www.aihero.dev/ai-coding-dictionary/subagent) to do the work itself, That helps, but it is only an instruction, not a structural fix. After you invoke the skill, watch your background task list and stop the duplicate.
+No. Upstream tracks recursive research delegation in [issue #530](https://github.com/mattpocock/skills/issues/530). This fork explicitly makes an existing child perform the research itself instead of delegating again. From the primary session, it launches a single background worker. Completion notifications replace polling, and the parent spot-checks citations before relaying claims.
 
-The opposite failure also happens. If your own global instructions forbid an agent from re-delegating work, the background agent declines the task, and the skill does nothing without telling you.
+If delegation is unavailable in a child, it researches directly. A primary session that cannot launch the requested worker reports that limitation instead of claiming background work has started.
 
 **Where should the file live, and should I commit it?**
 
@@ -58,7 +58,7 @@ The skill has no stopping criterion. This shows up as two complaints that look o
 
 **`/wayfinder` created research tickets. Do I resolve those myself?**
 
-No, it now fires them for you. In the unreleased changes since v1.1, a charting session spawns one `/research` subagent per research ticket and runs them in parallel. Each one records its findings on a throwaway `research/<name>` branch, with a [context pointer](https://www.aihero.dev/ai-coding-dictionary/context-pointer) from the ticket. Research tickets are the one exception to wayfinder's one-ticket-per-session rule, because they are [AFK](https://www.aihero.dev/ai-coding-dictionary/afk): nothing waits on you. One known problem: deleting the branch later breaks the context pointers in the tickets.
+Wayfinder dispatches ready research tickets with separate output paths, or isolated worktrees when code changes are needed. The primary session verifies findings, publishes them through the configured tracker, and updates the shared map serially. Temporary files gain a durable home before the ticket is resolved; remote publication follows the user's or project's authorization.
 
 ## It's working if
 

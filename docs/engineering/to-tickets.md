@@ -55,6 +55,10 @@ Where even the batches can't stay green alone, they share an integration branch 
 
 ## Common questions
 
+**Does a small CodeGraph result mean two tickets are independent?**
+
+Only verified coverage supports that conclusion. Tickets record known affected callers and coverage limits; missing or truncated graph results are followed through source searches. Known overlaps need a blocking edge or an explicit reason for proceeding independently.
+
 **It produced twelve tickets for a three-line change.**
 Over-decomposition is the most reported problem with this skill, and many users see it. The [model](https://www.aihero.dev/ai-coding-dictionary/model) defaults to atomic units and loses the grouping that would make them meaningful. The quiz step is where you fix this. Ask it to merge tickets, and it will. There is also a lower limit. If the whole change fits in one context window, you don't need this skill at all. Go straight to [implement](https://aihero.dev/skills-implement).
 

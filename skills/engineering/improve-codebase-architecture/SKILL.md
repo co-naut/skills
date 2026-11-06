@@ -24,7 +24,7 @@ This command is _informed_ by the project's domain model and built on a shared d
 
 Read the project's domain glossary (`GLOSSARY.md`) and any ADRs in the area you're touching first.
 
-Then spawn a sub-agent with a fresh context window to walk the codebase. Don't follow rigid heuristics; explore organically and note where you experience friction:
+From the primary session, dispatch a fresh `explore` child through `subagent` to walk the codebase and return findings; the primary session writes the report. If already in a built-in `general` child, inspect the code directly. Explore organically and note where you experience friction:
 
 - Where does understanding one concept require bouncing between many small modules?
 - Where are modules **shallow**, with an interface nearly as complex as the implementation?
@@ -32,13 +32,13 @@ Then spawn a sub-agent with a fresh context window to walk the codebase. Don't f
 - Where do tightly-coupled modules leak across their seams?
 - Which parts of the codebase are untested, or hard to test through their current interface?
 
-Tell the sub-agent to `codegraph_explore` each suspect module and read its callers (fan-in) and callees (fan-out) from the result. Done when every candidate card states both counts, taken from that result. Without the codegraph MCP tool, count by grep.
+For indexed repositories, ask the explorer to query suspect symbols with the absolute worktree `projectPath` and `maxFiles: 3`. Each candidate cites observed callers and callees; counts must name their scope and source. Follow capped or missing results with targeted source searches. Report partial or unknown fan-in/fan-out honestly rather than treating grep matches or a capped graph as exhaustive counts.
 
 Apply the **deletion test** to anything you suspect is shallow: would deleting it concentrate complexity, or just move it? A "yes, concentrates" is the signal you want.
 
 ### 2. Present candidates as an HTML report
 
-Write a self-contained HTML file to the OS temp directory so nothing lands in the repo. Resolve the temp dir from `$TMPDIR`, falling back to `/tmp` (or `%TEMP%` on Windows), and write to `<tmpdir>/architecture-review-<timestamp>.html` so each run gets a fresh file. Open it for the user (`xdg-open <path>` on Linux, `open <path>` on macOS, `start <path>` on Windows) and tell them the absolute path.
+Write the HTML report to the environment's preferred temporary directory (`/tmp/opencode` here); otherwise use `$TMPDIR`, falling back to the OS temp directory. Use a unique `architecture-review-<timestamp>.html` name. In Plan mode, present candidates in the conversation and defer writing the report until the user switches agents. Open a written report with the platform's file opener when available and always report its absolute path.
 
 The report uses **Tailwind via CDN** for layout and styling, and **Mermaid via CDN** for diagrams where a graph/flow/sequence reliably communicates the structure. Mix Mermaid with hand-crafted CSS/SVG visuals: use Mermaid when relationships are graph-shaped (call graphs, dependencies, sequences), and hand-built divs/SVG when you want something more editorial (mass diagrams, cross-sections, collapse animations). Each candidate gets a **before/after visualisation**. Be visual.
 

@@ -21,12 +21,12 @@ This is a prompt-driven skill, not a deterministic script. Explore, present what
 Look at the current repo to understand its starting state. Read whatever exists; don't assume:
 
 - `git remote -v` and `.git/config`: is this a GitHub repo? Which one?
-- `AGENTS.md` and `CLAUDE.md` at the repo root: does either exist? Is there already an `## Agent skills` section in either?
+- `AGENTS.md` at the repo root: is it a file or a symlink, and does it contain an `## Agent skills` section? Read any existing `CLAUDE.md` for prior configuration, but OpenCode V2 does not discover it as a fallback.
 - `GLOSSARY.md` and `GLOSSARY-MAP.md` at the repo root, and the legacy `CONTEXT.md` / `CONTEXT-MAP.md`. If a legacy file exists, offer to `git mv` it to its `GLOSSARY` name and rewrite those names in `docs/agents/domain.md`.
 - `docs/adr/` and any `src/*/docs/adr/` directories
 - `docs/agents/`: does this skill's prior output already exist?
 - `.scratch/`: a sign that a local-markdown issue tracker convention is already in use
-- Is the `triage` skill installed? (a `triage` skill folder alongside this one, or `triage` in your available skills.) This decides whether Section B runs at all.
+- Is the `triage` skill installed? Check the sibling `triage/SKILL.md` or the configured skill sources. Hidden skills are absent from the advertised list; absence there proves nothing. This decides whether Section B runs at all.
 - Monorepo signals: a `pnpm-workspace.yaml`, a `workspaces` field in `package.json`, or a populated `packages/*` with its own `src/`. These are present only in a genuinely large multi-package repo; their absence means single-context, which is almost every repo.
 
 ### 2. Present findings and ask
@@ -39,7 +39,7 @@ Lead each section with the recommended answer so the user can accept it in a wor
 
 > Explainer: The "issue tracker" is where issues live for this repo. Skills like `to-tickets`, `triage`, and `to-spec` read from and write to it. They need to know whether to call `gh issue create`, write a markdown file under `.scratch/`, or follow some other workflow you describe. Pick the place you actually track work for this repo.
 
-Default posture: these skills were designed for GitHub. If a `git remote` points at GitHub, propose that. If a `git remote` points at GitLab (`gitlab.com` or a self-hosted host), propose GitLab. Otherwise (or if the user prefers), offer:
+Prefer an existing tracker configuration. Otherwise propose the `origin` repository's host, and confirm the exact repository when a fork has both `origin` and `upstream`. Record its explicit identifier so later tracker commands cannot silently target upstream. If there is no suitable remote (or the user prefers), offer:
 
 - **GitHub**: issues live in the repo's GitHub Issues (uses the `gh` CLI)
 - **GitLab**: issues live in the repo's GitLab Issues (uses the [`glab`](https://gitlab.com/gitlab-org/cli) CLI)
@@ -66,20 +66,14 @@ Offer **multi-context** (a root `GLOSSARY-MAP.md` pointing to per-context `GLOSS
 
 Show the user a draft of:
 
-- The `## Agent skills` block to add to whichever of `CLAUDE.md` / `AGENTS.md` is being edited (see step 4 for selection rules)
+- The `## Agent skills` block to add to `AGENTS.md` (see step 4)
 - The contents of `docs/agents/issue-tracker.md`, `docs/agents/domain.md`, and `docs/agents/triage-labels.md` (the last only when `triage` is installed)
 
 Let them edit before writing.
 
 ### 4. Write
 
-**Pick the file to edit:**
-
-- If `CLAUDE.md` exists, edit it.
-- Else if `AGENTS.md` exists, edit it.
-- If neither exists, ask the user which one to create; don't pick for them.
-
-Never create `AGENTS.md` when `CLAUDE.md` already exists (or vice versa); always edit the one that's already there.
+**Write the OpenCode entry point:** update the existing `AGENTS.md`, or create it if absent. If it is a symlink, resolve and show its target in the draft before editing; preserve the link. A separate `CLAUDE.md` can supply prior tracker choices, but keep its contents intact. OpenCode loads `AGENTS.md`, not a standalone `CLAUDE.md`.
 
 If an `## Agent skills` block already exists in the chosen file, update its contents in-place rather than appending a duplicate. Don't overwrite user edits to the surrounding sections.
 

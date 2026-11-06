@@ -2,7 +2,7 @@
 
 `improve-codebase-architecture` surveys a codebase for **deepening opportunities**. These are places where a shallow module (an interface nearly as complex as the thing it hides) could become a deep one. It writes them up as a self-contained HTML report, and then [grills](https://www.aihero.dev/ai-coding-dictionary/grilling) you through the one you pick.
 
-It never changes the code. The whole run produces a conversation and one HTML file in your OS temp directory. You do the refactor later, in a separate [session](https://www.aihero.dev/ai-coding-dictionary/session), through the normal build flow. This makes it a survey, not a refactoring tool, so you can run it on a codebase you are not ready to touch yet.
+It surveys rather than refactors code. The primary session writes an HTML report under the environment's preferred temporary directory, `/tmp/opencode` here. In Plan mode, candidates stay in the conversation until you switch agents. A later design discussion may propose glossary entries or ADRs; those also wait for write-capable mode.
 
 Two filters stop the report from becoming generic cleanup advice. First, every candidate must pass the **deletion test**: if you removed this module, would its complexity move behind a smaller interface, or spread across the callers? Only the first case gets a card. Second, unless you point it at a specific area, it reads recent commit history first and focuses the scan on paths that change often. A deepening in code that nobody touches is a refactor that never pays back.
 
@@ -57,6 +57,10 @@ When you pick a candidate, a [grilling](https://aihero.dev/skills-grilling) sess
 
 ## Common questions
 
+**Are dependency counts complete?**
+
+Each count states its scope and source. CodeGraph is used only for indexed repositories, and capped or missing results lead to targeted source inspection. Partial coverage stays labeled partial; neither a graph excerpt nor grep matches prove a complete fan-in or fan-out count.
+
 **It grilled me for an hour about one idea instead of showing me options. Can I turn that off?**
 
 Yes. Say so when you invoke it ("don't grill me, just show the report"). This is the most common complaint about the skill. One user liked it as "a convenient way to get a thorough analysis of improvements," but after the grilling loop was added, found it "borderline unusable." In their sessions it proposed a single solution and then asked "10's or 100's of questions." The design intent is that the report comes first, and the grilling starts only on a candidate you chose. But weaker [models](https://www.aihero.dev/ai-coding-dictionary/model) skip straight to an interview about the first idea they had. Results in that thread vary a lot by model. It is an open issue, and the skill does not yet have a documented no-grill mode.
@@ -97,7 +101,7 @@ The skill does not ship a good answer. People often ask for a `TYPESCRIPT.md` wi
 
 - The candidates name your domain's concepts, not invented class names: "the Order intake module," not "the FooBarHandler."
 - The candidates are in files you edited recently, not in parts of the repo nobody touches.
-- No code changed during the run. The only new file is the HTML report in your temp directory.
+- The survey leaves application code unchanged; in Plan mode it presents candidates without writing files.
 - It stops after the report and asks which candidate you want. It does not continue on its own.
 - Each card explains the payoff as locality or leverage, and says which tests get simpler, not just "this is cleaner."
 - When you reject a candidate for a lasting reason, it offers to record an ADR, so the next run does not suggest it again.

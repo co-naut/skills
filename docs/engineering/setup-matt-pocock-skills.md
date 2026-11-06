@@ -4,7 +4,7 @@
 
 Those files are the only thing that varies between repos. The skills themselves are identical everywhere. They read `docs/agents/issue-tracker.md` at run time and do what it says. That is why the set is not tied to GitHub, and why you never edit a skill file to point it at another tracker. Invoking it with "link the skills to a custom issue tracker" works with anything you can connect to programmatically, with no changes to the skills.
 
-It is a prompt-driven skill, not a deterministic script. It reads your `git remote`, `CLAUDE.md` and `GLOSSARY.md`, proposes what it found, and waits for you to confirm before it writes anything.
+It is a prompt-driven skill, not a deterministic script. It reads your remotes, `AGENTS.md`, prior configuration and glossary, then waits for confirmation before writing. In a fork it confirms the exact tracker repository rather than assuming `upstream` is the intended target.
 
 ## When to reach for it
 
@@ -21,7 +21,7 @@ It writes into the repo you run it in:
 | `issue-tracker.md` | `docs/agents/` |
 | `domain.md` | `docs/agents/` |
 | `triage-labels.md` | `docs/agents/`, only when the `triage` skill is installed |
-| An `## Agent skills` block | whichever of `CLAUDE.md` or `AGENTS.md` already exists |
+| An `## Agent skills` block | `AGENTS.md`, created if absent; an existing symlink is preserved and its target disclosed |
 
 You commit all of it as markdown. There is no user-level or global mode. The config lives in the repo, so every repo gets its own copy.
 
@@ -58,9 +58,9 @@ No. GitHub, GitLab and local markdown under `.scratch/` all ship as ready-made t
 
 The direct answer after v1.1 was yes. The skill's own closing message is softer. It tells you to re-run only to switch trackers or start over. Both are defensible. The seed templates change between versions, so a `docs/agents/issue-tracker.md` from an older release can go out of date against the skills that now read it. If a downstream skill does something different from what the docs describe, re-run setup. It is cheap.
 
-**It wrote to `CLAUDE.md`, but I'm on Codex.**
+**Which instruction file does OpenCode use?**
 
-This is a known gap, and still open. The file-selection rule is "edit `CLAUDE.md` if it exists, else `AGENTS.md`". It checks which file exists, not which [harness](https://www.aihero.dev/ai-coding-dictionary/harness) is running. In a repo with a `CLAUDE.md` left over from Claude Code, the skill writes its `## Agent skills` block to a file Codex never reads. Users have two workarounds: move the block to `AGENTS.md` by hand, or keep `AGENTS.md` canonical and make `CLAUDE.md` a one-line pointer at it. If neither file exists, the skill asks you which to create instead of picking one. This has confused people who expected it to decide.
+OpenCode V2 discovers `AGENTS.md`, not a standalone `CLAUDE.md`. This fork writes the Agent skills block into `AGENTS.md`, creating it when needed. If that path is a symlink, the draft names its target and preserves the link. Separate Claude instructions can supply prior choices without being overwritten.
 
 **It didn't create my triage labels.**
 
@@ -71,7 +71,7 @@ It doesn't. `docs/agents/triage-labels.md` is a *mapping*: it tells `/triage` wh
 
 **Can I configure the other skills' behaviour here ([grilling](https://www.aihero.dev/ai-coding-dictionary/grilling) cadence, question format, tone)?**
 
-No. It configures three things: tracker, labels, doc layout. Users have asked to make it the place for per-user preferences. The answer is that skills stay opinionated and take no per-user config. Preferences belong in your `CLAUDE.md` as plain instructions, which every skill already reads.
+It configures tracker, labels, and doc layout. Standing OpenCode preferences belong in your scoped `AGENTS.md` instructions.
 
 **Can I keep the config in `~/.claude` instead of committing it to every repo?**
 
