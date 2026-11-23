@@ -1,8 +1,6 @@
 ## What it does
 
-In this OpenCode V2 fork, read-only fact finding uses an `explore` child session. If already in a built-in `general` child, look up facts directly instead of attempting nested delegation. Decisions still wait for the human's answers, using OpenCode's question tool when appropriate.
-
-`grilling` is the interview loop that stress-tests a plan, a decision, or an idea before anyone acts on it. It maps the subject as a **design tree**: every decision branches into the decisions that hang off it, and interviews you branch by branch until no assumption stays unstated.
+`grilling` is the interview loop that stress-tests a plan, a decision, or an idea before anyone acts on it. It maps the subject as a **design tree**: every decision branches into the decisions that hang off it. The agent works through those branches without turning facts and routine defaults into questions for you.
 
 It does not ask one question at a time, and it does not ask everything at once. Each **round** asks the whole **frontier**: every decision whose prerequisites are already settled, and nothing else. Two questions never share a round if one depends on the other; a question that hinges on an answer still open belongs to a later round. Your answers settle decisions, the frontier moves outward, and the next round asks what that unblocked. Thirteen questions typically land in about three rounds rather than thirteen.
 
@@ -28,7 +26,13 @@ The **design tree** is the model of the subject: decisions with decisions hangin
 
 Inside a round, every question has a fixed format: numbered and titled behind a `❓`, then the body, then the agent's recommended answer alone on a `➡️` line. This format lets you answer a round by number ("1 yes, 2 the second option, 3 no, here's why") instead of by quoting questions back. The format has one known problem. The recommendation sometimes argues *against* the question as it was worded, so agreeing with the recommendation means answering "no" to the question. When that happens, answer the recommendation and say so.
 
-The other half of the design is the split between facts and decisions. Facts are the skill's own job. When a frontier question needs something the [environment](https://www.aihero.dev/ai-coding-dictionary/environment) can settle, the agent dispatches a [sub-agent](https://www.aihero.dev/ai-coding-dictionary/subagent) to find out rather than asking you. The round does not wait for that research; only the questions that depend on it wait. Decisions are yours, and the agent must wait for them. An agent running `grilling` that answers its own decisions has broken the skill. The session ends when the frontier is empty. The agent then waits for you to confirm a shared understanding before it acts on what you agreed.
+The agent handles three kinds of unknowns differently:
+
+- **Facts** it can verify in the [environment](https://www.aihero.dev/ai-coding-dictionary/environment) are its job. It checks directly or delegates longer research to an `explore` [subagent](https://www.aihero.dev/ai-coding-dictionary/subagent) when available and permitted. Only questions that depend on the research wait.
+- **Reversible defaults** don't need individual approval if they leave scope, user-facing or agreed behavior, and constraints intact. The agent includes defaults that affect the plan in the recap.
+- **Decisions** about meaningful tradeoffs, scope, user-facing behavior, or hard-to-reverse commitments are yours.
+
+An empty frontier can mean research is blocking the remaining questions. The agent waits until every in-scope branch is settled or you've explicitly deferred it, then recaps the plan for confirmation. Confirming the recap ends the interview. It doesn't authorize implementation.
 
 The frontier has one limit. The agent chooses it by judgement; it does not compute it from a graph. So it can put two questions in one round and only later find that one answer should have changed the other. The only guard is to tell it. That reopens the affected branch in the next round.
 
@@ -63,7 +67,7 @@ This is the most common objection to rounds, and the frontier answers it. A roun
 The confirmation gate exists for this. The skill is finished when you say the understanding is shared, not when the frontier empties. Weaker and faster [models](https://www.aihero.dev/ai-coding-dictionary/model) still skip the gate. Users report this most often on lower-effort or non-frontier models, which collapse "interview until shared understanding" into a couple of questions and an outline. If yours does it, the reliable fix is a line in your own `AGENTS.md` or `CLAUDE.md` telling the agent not to implement without permission.
 
 **It answered its own questions instead of asking me.**
-That is a bug in the run, and it is the reason the skill's text separates facts from decisions. It happens most when another skill runs `grilling` to resolve a ticket, and the agent takes that task as permission to keep moving. The same constraint is why there is no async mode. People have asked for a variant that reads a GitHub issue and posts one consolidated decision memo, and that is a different skill, because a grilling session that nobody answers has produced the agent's opinion rather than yours.
+If it chose a meaningful tradeoff for you, that's a bug. Looking up facts and carrying forward minor, reversible defaults are different. A session that settles your design decisions without your answers has produced the agent's opinion, not yours.
 
 **Can I cap the number of questions?**
 No, and a cap is out of scope on purpose. Some plans need three questions and some need fifty; a fixed ceiling either truncates the hard case or feels arbitrary on the easy one. The intended control is plain language. Tell it to wrap up, or stop and accept the plan where it stands. If a session is running very long, the cause is usually that the scope was too big; break the work up and grill the pieces.
@@ -81,8 +85,7 @@ This is a real bug, still unfixed, and users report it across [harnesses](https:
 - Later rounds ask things the first round could not have asked.
 - It goes and looks facts up (reading files, dispatching a sub-agent) rather than asking you something it could have found out.
 - Research running in the background does not stall the round; only the questions that depend on it wait.
-- It stops at the end and asks you to confirm the understanding is shared, instead of starting work.
-- Question count stays high while round count stays low.
+- Once the branches are settled or explicitly deferred, it asks you to confirm a recap that includes the defaults that affect the plan. It doesn't start building.
 
 ## Where it fits
 

@@ -54,6 +54,7 @@ It can be, if you prototype questions you could have answered by talking, or let
 - You can say in one sentence what question the prototype exists to answer, and it's written at the top of the demo, not just in your head.
 - Someone who doesn't read code can drive the logic demo. They open the file, press the buttons in a walkthrough tab, and describe what they see in their own words.
 - Someone says "wait, that shouldn't be possible" or "huh, I assumed X". That's a bug in the *idea*, which is what the prototype is for.
+- The agent has opened every UI variant before sharing the link, or tells you which variants it couldn't render.
 - The UI variants disagree about layout and information hierarchy, not just colour and copy, and the feedback you get is "the header from B with the sidebar from C".
 - It is answered in one sitting. If you're still building it a day later, the question was too big; split it.
 - When it's over, main contains the decision and none of the prototype, and the implementation issue points at the branch that still holds it.

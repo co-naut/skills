@@ -93,6 +93,8 @@ Put the switcher in a single shared component so both sub-shapes can reuse it. L
 
 ### 5. Hand it over
 
+Before sharing the URL, open each variant at a viewport representative of its intended use. Check that the variants differ in layout or information hierarchy, not just styling, and compare them against any supplied visual reference. Fix discrepancies that affect the design question and recheck the affected variants. If you can't render a variant, say which one you couldn't check and why.
+
 Surface the URL (and the `?variant=` keys). The user will flip through whenever they get to it. The interesting feedback is usually **"I want the header from B with the sidebar from C"**, which is the actual design they want.
 
 ### 6. Capture the answer and clean up

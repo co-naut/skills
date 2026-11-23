@@ -2,7 +2,7 @@
 
 `implement` builds work that has already been decided. You point it at a ticket, spec, or agreed plan. It records the starting commit and existing changes, builds at approved testing seams, verifies the work, and reviews the complete task diff. It commits only when the user or project workflow authorizes that step.
 
-It never reopens the plan. There is no interview, no clarifying round, no proposal of a different approach. Whatever was settled upstream is the input, and the skill's whole job is to turn that into a commit. That is what separates it from typing "build this" at a fresh [agent](https://www.aihero.dev/ai-coding-dictionary/agent), which often redesigns the work while it builds it.
+It builds from the agreed plan rather than reopening it. The [agent](https://www.aihero.dev/ai-coding-dictionary/agent) handles minor, reversible decisions without waiting for you, but asks before changing the scope or agreed behavior.
 
 ## When to reach for it
 
@@ -32,7 +32,7 @@ If the tickets came from [to-tickets](https://aihero.dev/skills-to-tickets), [se
 
 A run has five steps, in order:
 
-1. Read the ticket or spec and work out the seams.
+1. Read the ticket or spec, work out the seams, and check whether existing code can do the job without changing behavior other callers rely on.
 2. Drive [tdd](https://aihero.dev/skills-tdd) at the pre-agreed seams, one red-green slice at a time.
 3. Typecheck often, run single test files as it goes.
 4. Run the full test suite once, at the end.
@@ -50,7 +50,7 @@ The "pre-agreed" part matters. `tdd` reads approval from the spec, ticket, or pa
 
 **It finished, but my ticket is still open and the acceptance criteria are still unchecked.**
 
-Correct, and expected. `implement` has no completion step. It ends at the commit and never touches the work item. This is the same on GitHub Issues and on the local markdown tracker, so it is not a tracker integration problem. It also does not act on the findings `code-review` produced, and does not tick the `- [ ]` boxes on the originating issue. Close the ticket and reconcile the criteria yourself. This matters most on a dependency chain, because `to-tickets` defines the frontier as tickets whose blockers are all closed. If nothing gets closed, nothing ever becomes visibly unblocked.
+`implement` fixes confirmed review findings and reports a verification result or a gap for each acceptance criterion. It does not tick boxes or close the work item. Use the report to reconcile the criteria and close the ticket before moving on to work it blocks.
 
 **Can I point it at all my tickets at once, or run several in parallel?**
 
@@ -79,7 +79,7 @@ The agent resolved `#2` against another numbered list in context, such as a todo
 - The session opens by reading the ticket or spec and restating what it will build, rather than asking you what to build.
 - You can see an actual `tdd` Skill tool call in the trace, not just tests appearing in the diff.
 - Typechecks and single test files run repeatedly during the run, and the full suite runs once near the end.
-- The run reaches a commit on your current branch without you prompting it to carry on.
+- The final report gives a verification result or an explicit gap for each acceptance criterion, and states whether the changes were committed or left uncommitted.
 - The diff is one ticket's worth of change: a vertical slice through every layer, not several tickets swept together.
 
 ## Where it fits

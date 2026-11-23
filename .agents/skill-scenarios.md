@@ -7,6 +7,10 @@ Use these scenarios after changing a listed skill or merging upstream. Inspect t
 | Setup with only `CLAUDE.md`, plus `origin` and `upstream` | Proposes `AGENTS.md`, preserves the Claude file, and confirms the exact tracker repository. |
 | Setup with `AGENTS.md` symlinked to `CLAUDE.md` | Names the resolved target before editing and preserves the symlink. |
 | WIP containing an interim commit, staged edits, unstaged edits, and a new untracked file | `implement` supplies its start SHA; review includes all four sources and excludes identified pre-existing work. |
+| `implement` ticket with an approved test seam, an unspecified internal name, a proposed public behavior change outside the ticket, and a check blocked by a missing fixture | Chooses the internal name and continues; asks before expanding scope; reports a verification result or an explicit gap for each acceptance criterion. |
+| `implement` ticket that could reuse a shared helper with another caller | Inspects the helper and its callers before choosing reuse; preserves the other caller's behavior. |
+| UI prototype with a supplied reference and two variants that differ only in styling | Renders each variant, compares it against the reference, and revises the lookalikes before handoff; names any variant it could not render and why. |
+| Grilling with a verifiable fact, a reversible default, and a decision blocked on research | Looks up the fact, carries the default, and asks independent questions. Does not close while blocked. Once the decision is answered or explicitly deferred, recaps it and any defaults that affect the plan, then asks for confirmation without starting work. |
 | Staged review with additional unstaged edits in the same file | Review uses index contents, not the newer working-tree contents. |
 | Review in a repository with no first commit | Index, working tree, and untracked files are accounted for without requiring `HEAD` to resolve. |
 | `tdd` inside a worker with approved seams in its brief | Starts the loop at those seams without asking again. A changed seam returns to the parent. |

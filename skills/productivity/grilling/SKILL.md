@@ -25,8 +25,8 @@ Word each question so "yes" accepts your recommended answer.
 
 Each round the user answers reshapes the tree: settled decisions push the frontier outward and unblock questions that depended on them. Recompute the frontier and ask the next round. A question whose answer depends on another question still open in this round belongs to a _later_ round, not this one.
 
-Finding _facts_ is your job, never the user's. When a frontier question needs a fact from the environment (filesystem, tools, etc.), dispatch a sub-agent with a fresh context window to find it; don't ask the user for anything you could look up yourself. Don't block on it: a running exploration is an unsettled prerequisite, so only the questions downstream of it wait for the sub-agent to report; ask the rest of the frontier now. The _decisions_ are the user's: put each to them and wait.
+- **Facts:** Look up what you can verify. Inspect directly for quick checks; for longer read-only exploration, dispatch a fresh OpenCode `explore` subagent when available and permitted. Otherwise inspect directly. While research is pending, ask the ready questions that don't depend on it.
+- **Defaults:** Carry forward minor, reversible choices that leave scope, user-facing or agreed behavior, and constraints intact. Put defaults that affect the plan in the recap rather than asking about each one.
+- **Decisions:** Ask the user about meaningful tradeoffs, changes to scope or user-facing behavior, and hard-to-reverse commitments. Wait for their answer. Use the `question` tool for choices when it fits the round; otherwise ask in the conversation.
 
-In OpenCode V2, use `subagent` with `agent: "explore"` for read-only fact finding. If already in a built-in `general` child, look up those facts directly because that child cannot launch further subagents. Use the `question` tool for choices when it fits the round; otherwise ask in the conversation.
-
-The session is done when the frontier is empty: every branch of the design tree visited, nothing left silently assumed. Do not act on it until the user confirms you have reached a shared understanding.
+An empty frontier can mean the remaining branches are blocked. Close only when every in-scope branch is settled or the user has explicitly deferred it. Recap the decisions, defaults that affect the plan, and deferrals, then ask the user to confirm the shared understanding. Confirmation closes the interview; implementing the plan requires separate authorization.

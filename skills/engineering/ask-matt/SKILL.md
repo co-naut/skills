@@ -18,7 +18,7 @@ Recommend a **flow**, the path through the installed skills that fits the user's
 
 | Build path | When to use it |
 | --- | --- |
-| **`@implement`** per ticket | You want to steer each ticket. Start a new session for each self-contained ticket, working blockers first. It reviews the task's committed and uncommitted work against its recorded starting point. |
+| **`@implement`** per ticket | You want to steer scope and agreed behavior while leaving minor, reversible decisions to the agent. Start a new session for each self-contained ticket, working blockers first. It reviews the task's committed and uncommitted work against its recorded starting point. |
 | **`@implement-spec`** | You want the primary session to orchestrate the whole graph. Approve seams before dispatch; workers implement in isolated worktrees, merges are serial, and one final review covers the integration branch. |
 
 Both build paths use **`@tdd`** at approved seams and **`@code-review`** for separate Standards and Spec findings. Use either directly for a smaller task: test-first work, or review of a branch, staged changes, or WIP. Committing and publishing follow the authorized workflow.
